@@ -81,6 +81,8 @@ void MainWindow::copyBtnClicked()
     connect(copyThread, SIGNAL(finished()), copier, SLOT(deleteLater()));
     connect(copyThread, SIGNAL(started()), copier, SLOT(copy()));
     connect(copier, SIGNAL(progress(int)), copyProgress, SLOT(setValue(int)));
+    connect(copier, SIGNAL(ready()), copyThread, SLOT(quit()));
+    connect(copier, SIGNAL(ready()), copyThread, SLOT(deleteLater()));
 
     copyThread->start();
 }

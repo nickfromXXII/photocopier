@@ -17,9 +17,21 @@ private:
     QString src;
     QString dest;
 
+    struct Postfix {
+        QString year;
+        QString month;
+        QString day;
+
+        Postfix(QString y, QString m, QString d) : year(y), month(m), day(d) {}
+
+        QString toString() {
+            return "/" + year + "/" + month + "/" + day + "/";
+        }
+    };
+
 signals:
     void progress(int);
-    void ready(const QString&);
+    void ready();
 
 };
 

@@ -10,26 +10,28 @@ void Copier::copy()
     QDirIterator photosDir(src, QDirIterator::NoIteratorFlags);
     QDate lastPhotoShotDay;
     QDir destDir(dest);
-    int filesToCopy = QDir(src).count();
+    uint filesToCopy = QDir(src).count();
     int copied = 0;
     while (photosDir.hasNext()) {
         QFileInfo photo(photosDir.next());
         QDate shotDate = photo.birthTime().date();
+        Postfix postfix(
+                    shotDate.toString("yyyy"),
+                    shotDate.toString("MM.yyyy"),
+                    shotDate.toString("dd.MM")
+                        );
         if (shotDate != lastPhotoShotDay) {
-            destDir.mkdir(shotDate.toString("d.M.yyyy"));
+            destDir.mkpath(postfix.toString());
         }
-        qDebug() << photo.filePath() << " " << destDir.path() + "/" + shotDate.toString("d.M.yyyy") + "/"
-                    + photo.fileName();
         QFile::copy(
                     photo.filePath(),
-                    destDir.path() + "/" + shotDate.toString("d.M.yyyy") + "/" + photo.fileName()
+                    destDir.path() + postfix.toString() + photo.fileName()
                     );
         copied++;
-        qDebug() << copied << "/" << filesToCopy << " " << int(double(copied)/double(filesToCopy)*100.0);
         emit progress(int(double(copied)/double(filesToCopy)*100.0));
     }
 
-    emit ready("Successfully copied");
+    emit ready();
 }
 
 void Copier::setPath(const QString &src, const QString dest)
